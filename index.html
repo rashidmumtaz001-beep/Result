@@ -384,17 +384,19 @@
             pdfButton.style.display = 'block';
         }
 
-        // --- NEW PDF FUNCTIONALITY ---
+        // --- UPDATED PDF FUNCTIONALITY (Increased Scale) ---
         function saveAsPdf() {
             const element = document.getElementById('resultCard');
             const studentName = document.getElementById('studentName').value || 'Student_Result';
             
             // Configuration for html2pdf
             const opt = {
-                margin: 0.5, // Margins in inches
+                // Increased margin slightly
+                margin: 0.6, // Margins in inches
                 filename: `${studentName.replace(/ /g, '_')}_Result_Card.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                // *** IMPORTANT FIX: Increased scale to 3 for better rendering and clarity/size in PDF ***
+                html2canvas: { scale: 3, logging: false, dpi: 300, letterRendering: true }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
