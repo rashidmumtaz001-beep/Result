@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Board Result Generator (Editable Subjects)</title>
+    <title>Result Card Generator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf.js CDN for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* Ensuring English LTR and a clean font */
@@ -16,27 +19,6 @@
         }
         input::placeholder {
             text-align: left; /* Alignment for LTR placeholders */
-        }
-        /* Custom print style for Board Result look */
-        @media print {
-            body > *:not(#resultCard):not(.modal) {
-                display: none;
-            }
-            #resultCard {
-                visibility: visible;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 0;
-                margin: 0;
-                box-shadow: none;
-                border: none;
-            }
-            #resultCard .institute-logo {
-                width: 100px;
-                height: 100px;
-            }
         }
         /* Custom Modal Style */
         .modal {
@@ -50,6 +32,9 @@
             overflow: auto;
             background-color: rgba(0,0,0,0.5);
         }
+        .modal-content {
+            transform: translateY(20vh); /* Center the modal content */
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 flex justify-center">
@@ -57,7 +42,7 @@
     <!-- Main Container -->
     <div class="max-w-5xl w-full bg-white shadow-2xl rounded-xl p-6 md:p-10 my-8">
         <h1 class="text-3xl font-bold text-center text-blue-700 mb-6 border-b-2 border-blue-200 pb-3">
-            Online Board Result Generator (Editable Subjects)
+            Result Card Generator
         </h1>
 
         <!-- Input Form -->
@@ -66,7 +51,6 @@
             
             <!-- Details Grid (Name, Roll No, Class, Institute) - Clearly in Columns -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <!-- Institute Name is now fully editable by the user -->
                 <input type="text" id="instituteName" placeholder="Institute/Board Name" value="Board of Intermediate and Secondary Education" class="p-3 border border-gray-300 rounded-lg">
                 <input type="text" id="studentName" placeholder="Student Name" value="Muhammad Ali Khan" class="p-3 border border-gray-300 rounded-lg">
                 <input type="text" id="rollNumber" placeholder="Roll Number" value="987654" class="p-3 border border-gray-300 rounded-lg">
@@ -76,85 +60,32 @@
                 <input type="text" id="dateOfIssue" placeholder="Date of Issue (Optional)" value="15-11-2025" class="p-3 border border-gray-300 rounded-lg">
             </div>
 
-            <h2 class="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-green-500 pl-3 mt-8">Subject Details (9 Subjects)</h2>
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-green-500 pl-3 mt-8">Subject Details</h2>
             
-            <!-- Marks Per Subject Input -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                <!-- Total Marks Per Subject is now editable by the user -->
+            <!-- Global Max Marks Input -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 items-center">
                 <input type="number" id="marksPerSubject" placeholder="Max Marks Per Subject (e.g., 100)" value="100" min="1" class="p-3 border border-gray-300 rounded-lg font-bold text-center col-span-1">
                 <div class="col-span-2 text-sm text-gray-500 flex items-center">
-                    <p class="italic">Note: All 9 subjects will have these maximum marks. (Passing Marks = 40% of Max Marks)</p>
+                    <p class="italic">Note: All subjects will have these maximum marks. (Passing Marks = 40% of Max Marks)</p>
                 </div>
             </div>
 
-            <!-- Subject Names and Marks Input Grid (9 subjects with editable names) -->
-            <div id="subjectInputs" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
-                <!-- Subject 1 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_0" class="text-sm font-semibold text-gray-600">Subject Name 1</label>
-                    <input type="text" id="subjectName_0" value="Urdu" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_0" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_0" min="0" value="78" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 2 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_1" class="text-sm font-semibold text-gray-600">Subject Name 2</label>
-                    <input type="text" id="subjectName_1" value="English" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_1" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_1" min="0" value="85" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 3 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_2" class="text-sm font-semibold text-gray-600">Subject Name 3</label>
-                    <input type="text" id="subjectName_2" value="Mathematics" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_2" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_2" min="0" value="62" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 4 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_3" class="text-sm font-semibold text-gray-600">Subject Name 4</label>
-                    <input type="text" id="subjectName_3" value="Physics" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_3" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_3" min="0" value="90" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 5 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_4" class="text-sm font-semibold text-gray-600">Subject Name 5</label>
-                    <input type="text" id="subjectName_4" value="Chemistry" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_4" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_4" min="0" value="81" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 6 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_5" class="text-sm font-semibold text-gray-600">Subject Name 6</label>
-                    <input type="text" id="subjectName_5" value="Biology" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_5" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_5" min="0" value="73" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 7 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_6" class="text-sm font-semibold text-gray-600">Subject Name 7</label>
-                    <input type="text" id="subjectName_6" value="Computer Science" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_6" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_6" min="0" value="95" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 8 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_7" class="text-sm font-semibold text-gray-600">Subject Name 8</label>
-                    <input type="text" id="subjectName_7" value="Pakistan Studies" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_7" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_7" min="0" value="88" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
-                <!-- Subject 9 -->
-                <div class="flex flex-col space-y-2 border p-3 rounded-lg bg-gray-50 shadow-sm">
-                    <label for="subjectName_8" class="text-sm font-semibold text-gray-600">Subject Name 9</label>
-                    <input type="text" id="subjectName_8" value="Islamiat" class="p-2 border border-gray-300 rounded-lg">
-                    <label for="subjectMarks_8" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
-                    <input type="number" id="subjectMarks_8" min="0" value="75" class="p-3 border border-gray-300 rounded-lg text-center font-bold">
-                </div>
+            <!-- Subject Names and Marks Dynamic Input Container -->
+            <div id="subjectsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
+                <!-- Dynamic subject inputs will go here -->
             </div>
 
-            <button onclick="calculateResult()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-200 shadow-md">
+            <!-- Add/Remove Buttons -->
+            <div class="flex space-x-4 mb-8">
+                <button onclick="addSubjectInput()" class="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 rounded-lg transition duration-200 shadow-md">
+                    + Add New Subject
+                </button>
+                <button onclick="removeLastSubject()" id="removeSubjectBtn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg transition duration-200 shadow-md disabled:opacity-50" disabled>
+                    - Remove Last Subject
+                </button>
+            </div>
+
+            <button onclick="calculateResult()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition duration-200 shadow-xl">
                 Generate Result
             </button>
         </div>
@@ -164,24 +95,31 @@
             <!-- Result card content will be generated here by JS -->
         </div>
 
-        <button id="printButton" onclick="window.print()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200 mt-6 shadow-md">
-            Print Result Card
+        <!-- Button changed to saveAsPdf() -->
+        <button id="pdfButton" onclick="saveAsPdf()" class="hidden w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200 mt-6 shadow-md">
+            Save as PDF File
         </button>
     </div>
 
     <!-- Custom Message Modal -->
     <div id="customModal" class="modal">
-        <div class="modal-content bg-white m-auto p-6 rounded-lg shadow-xl max-w-sm text-center">
-            <p id="modalMessage" class="text-lg mb-4 text-gray-800"></p>
-            <button onclick="closeModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+        <div class="modal-content bg-white m-auto p-6 rounded-xl shadow-2xl max-w-sm text-center border-t-4 border-red-500">
+            <p id="modalMessage" class="text-lg mb-4 text-gray-800 font-semibold"></p>
+            <button onclick="closeModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
                 OK
             </button>
         </div>
     </div>
 
     <script>
-        // Number of subjects remains constant
-        const NUM_SUBJECTS = 9;
+        let subjectCounter = 0;
+        const initialSubjects = [
+            { name: "Urdu", marks: 78 },
+            { name: "English", marks: 85 },
+            { name: "Mathematics", marks: 62 },
+            { name: "Physics", marks: 90 },
+            { name: "Chemistry", marks: 81 }
+        ];
 
         // Custom alert function (replacing alert())
         function showAlert(message) {
@@ -195,6 +133,57 @@
 
         function closeModal() {
             document.getElementById('customModal').style.display = 'none';
+        }
+
+        // Helper function to update the remove button state
+        function updateRemoveButton() {
+            const container = document.getElementById('subjectsContainer');
+            const button = document.getElementById('removeSubjectBtn');
+            // Disable if there are no subject inputs (children)
+            button.disabled = container.children.length === 0; 
+        }
+
+        // Function to add a new subject input block
+        function addSubjectInput(initialName = `New Subject ${subjectCounter + 1}`, initialMarks = 0) {
+            const container = document.getElementById('subjectsContainer');
+            const newId = `subject_${subjectCounter++}`;
+
+            const div = document.createElement('div');
+            div.id = newId;
+            div.className = 'flex flex-col space-y-2 border p-4 rounded-lg bg-gray-50 shadow-sm';
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <label for="subjectName_${newId}" class="text-sm font-semibold text-gray-600">Subject Name</label>
+                    <button type="button" onclick="removeSubjectInput('${newId}')" class="text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1 rounded-full leading-none">
+                        &times; Remove
+                    </button>
+                </div>
+                <input type="text" id="subjectName_${newId}" value="${initialName}" class="p-2 border border-gray-300 rounded-lg" required>
+                <label for="subjectMarks_${newId}" class="text-sm font-semibold text-gray-600">Marks Obtained</label>
+                <input type="number" id="subjectMarks_${newId}" min="0" value="${initialMarks}" class="p-3 border border-gray-300 rounded-lg text-center font-bold" required>
+            `;
+            
+            container.appendChild(div);
+            updateRemoveButton();
+        }
+
+        // Function to remove a specific subject input block
+        function removeSubjectInput(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+                updateRemoveButton();
+            }
+        }
+
+        // Function to remove the last subject input block (for the "Remove Last" button)
+        function removeLastSubject() {
+            const container = document.getElementById('subjectsContainer');
+            if (container.lastChild) {
+                container.removeChild(container.lastChild);
+                updateRemoveButton();
+            }
         }
 
         // Grade Logic (Based on percentage)
@@ -215,6 +204,7 @@
             return 'Fail';
         }
 
+        // Main calculation and generation function
         function calculateResult() {
             const instituteName = document.getElementById('instituteName').value;
             const logoUrl = document.getElementById('logoUrl').value;
@@ -222,13 +212,34 @@
             const rollNumber = document.getElementById('rollNumber').value;
             const className = document.getElementById('className').value;
             const dateOfIssue = document.getElementById('dateOfIssue').value;
+            const marksPerSubjectInput = document.getElementById('marksPerSubject');
+            const subjectsContainer = document.getElementById('subjectsContainer');
             
             const resultCardDiv = document.getElementById('resultCard');
-            const printButton = document.getElementById('printButton');
+            const pdfButton = document.getElementById('pdfButton'); // Updated button ID
+            
+            // Get all dynamically added subject blocks
+            const subjectBlocks = subjectsContainer.querySelectorAll('div[id^="subject_"]');
+            const NUM_SUBJECTS = subjectBlocks.length;
+            
+            // Check for minimum subjects
+            if (NUM_SUBJECTS === 0) {
+                showAlert("Please add at least one subject to generate the result.");
+                resultCardDiv.style.display = 'none';
+                pdfButton.style.display = 'none';
+                return;
+            }
 
             // Read dynamic Max Marks per Subject
-            const marksPerSubjectInput = document.getElementById('marksPerSubject');
             const TOTAL_MARKS_PER_SUBJECT = parseInt(marksPerSubjectInput.value);
+            
+            // Basic validation for Max Marks per Subject
+            if (isNaN(TOTAL_MARKS_PER_SUBJECT) || TOTAL_MARKS_PER_SUBJECT < 10) {
+                showAlert(`Please enter a valid Max Marks Per Subject (minimum 10).`);
+                resultCardDiv.style.display = 'none';
+                pdfButton.style.display = 'none';
+                return;
+            }
 
             // Calculate dynamic Passing Marks (40% of Max Marks)
             const PASSING_MARKS = Math.ceil(TOTAL_MARKS_PER_SUBJECT * 0.40);
@@ -238,35 +249,26 @@
             let marksData = [];
             let isValid = true; 
 
-            // Basic validation for Max Marks per Subject
-            if (isNaN(TOTAL_MARKS_PER_SUBJECT) || TOTAL_MARKS_PER_SUBJECT < 10) {
-                showAlert(`Please enter a valid Max Marks Per Subject (minimum 10).`);
-                isValid = false;
-            }
-
-            if (!isValid) {
-                resultCardDiv.style.display = 'none';
-                printButton.style.display = 'none';
-                return;
-            }
-
-            // 1. Calculate all marks by looping through 9 dynamic inputs
-            for (let i = 0; i < NUM_SUBJECTS; i++) {
-                const nameInput = document.getElementById(`subjectName_${i}`);
-                const marksInput = document.getElementById(`subjectMarks_${i}`);
+            // 1. Calculate all marks by looping through dynamic inputs
+            subjectBlocks.forEach(block => {
+                const id = block.id;
+                const nameInput = document.getElementById(`subjectName_${id}`);
+                const marksInput = document.getElementById(`subjectMarks_${id}`);
                 
-                if (!nameInput || !marksInput) continue;
+                if (!nameInput || !marksInput) return; // Should not happen
 
-                const subjectName = nameInput.value || `Subject ${i + 1}`;
+                const subjectName = nameInput.value.trim() || `Unnamed Subject`;
                 const marks = parseInt(marksInput.value);
 
                 if (isNaN(marks) || marks < 0 || marks > TOTAL_MARKS_PER_SUBJECT) {
-                    showAlert(`Please enter valid marks for ${subjectName} (0-${TOTAL_MARKS_PER_SUBJECT}).`);
+                    showAlert(`Please enter valid marks for "${subjectName}" (0-${TOTAL_MARKS_PER_SUBJECT}).`);
                     isValid = false;
-                    break;
+                    return;
                 }
-
-                const grade = getGrade(Math.ceil((marks / TOTAL_MARKS_PER_SUBJECT) * 100)); // Grade based on relative percentage
+                
+                const percentageInSubject = (marks / TOTAL_MARKS_PER_SUBJECT) * 100;
+                const grade = getGrade(Math.ceil(percentageInSubject)); 
+                
                 if (marks < PASSING_MARKS) {
                     isFailed = true;
                 }
@@ -279,16 +281,16 @@
                     grade: grade,
                     status: marks >= PASSING_MARKS ? 'Pass' : 'Fail'
                 });
-            }
+            });
 
             // Prevent generation if input is invalid
             if (!isValid) {
                 resultCardDiv.style.display = 'none';
-                printButton.style.display = 'none';
+                pdfButton.style.display = 'none';
                 return;
             }
 
-            const grandTotalMarks = NUM_SUBJECTS * TOTAL_MARKS_PER_SUBJECT; // 9 * Max Marks
+            const grandTotalMarks = NUM_SUBJECTS * TOTAL_MARKS_PER_SUBJECT; 
             const percentage = ((totalObtainedMarks / grandTotalMarks) * 100).toFixed(2);
             const finalResult = isFailed ? 'FAIL' : 'PASS';
             
@@ -327,7 +329,7 @@
             // Summary Row for Board Result look
             marksTableHTML += `
                 <tr class="bg-blue-50 font-extrabold text-blue-800">
-                    <td class="border border-gray-400 p-3 text-left">GRAND TOTAL:</td>
+                    <td class="border border-gray-400 p-3 text-left">GRAND TOTAL (${NUM_SUBJECTS} Subjects):</td>
                     <td class="border border-gray-400 p-3 text-center">${grandTotalMarks}</td>
                     <td class="border border-gray-400 p-3 text-center">${totalObtainedMarks}</td>
                     <td class="border border-gray-400 p-3 text-center" colspan="2"></td>
@@ -377,10 +379,38 @@
                 <p class="text-right text-sm mt-8 text-gray-500 italic border-t pt-4">Note: This result is provisional. Contact the institute for verification in case of any discrepancy.</p>
             `;
 
-            // 3. Display and Print button
+            // 3. Display button
             resultCardDiv.style.display = 'block';
-            printButton.style.display = 'block';
+            pdfButton.style.display = 'block';
         }
+
+        // --- NEW PDF FUNCTIONALITY ---
+        function saveAsPdf() {
+            const element = document.getElementById('resultCard');
+            const studentName = document.getElementById('studentName').value || 'Student_Result';
+            
+            // Configuration for html2pdf
+            const opt = {
+                margin: 0.5, // Margins in inches
+                filename: `${studentName.replace(/ /g, '_')}_Result_Card.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Call the library to generate and download the PDF
+            html2pdf().set(opt).from(element).save();
+        }
+        // ------------------------------
+
+        // Initialize with default subjects on load
+        window.onload = function() {
+            initialSubjects.forEach(subject => {
+                addSubjectInput(subject.name, subject.marks);
+            });
+            updateRemoveButton();
+        };
+
     </script>
 </body>
 </html>
