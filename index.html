@@ -91,7 +91,8 @@
         </div>
         
         <!-- Result Card Display Area -->
-        <div id="resultCard" class="border-4 border-blue-600 rounded-xl p-6 mt-10 hidden">
+        <div id="resultCard" class="border-4 border-blue-600 rounded-xl p-4 mt-10 hidden">
+            <!-- Padding changed from p-6 to p-4 to save vertical space -->
             <!-- Result card content will be generated here by JS -->
         </div>
 
@@ -303,11 +304,12 @@
                 <table class="w-full border-2 border-gray-700 border-collapse mt-4 text-sm md:text-base">
                     <thead>
                         <tr class="bg-gray-100">
-                            <th class="border border-gray-400 p-3 text-left">Subject</th>
-                            <th class="border border-gray-400 p-3 w-1/6">Total Marks</th>
-                            <th class="border border-gray-400 p-3 w-1/6">Marks Obtained</th>
-                            <th class="border border-gray-400 p-3 w-1/6">Grade</th>
-                            <th class="border border-gray-400 p-3 w-1/6">Status</th>
+                            <!-- Padding reduced from p-3 to p-2 -->
+                            <th class="border border-gray-400 p-2 text-left">Subject</th>
+                            <th class="border border-gray-400 p-2 w-1/6">Total Marks</th>
+                            <th class="border border-gray-400 p-2 w-1/6">Marks Obtained</th>
+                            <th class="border border-gray-400 p-2 w-1/6">Grade</th>
+                            <th class="border border-gray-400 p-2 w-1/6">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -317,11 +319,12 @@
                 const statusColor = item.status === 'Fail' ? 'text-red-600' : 'text-green-600';
                 marksTableHTML += `
                     <tr>
-                        <td class="border border-gray-300 p-3 text-left">${item.name}</td>
-                        <td class="border border-gray-300 p-3 text-center">${item.total}</td>
-                        <td class="border border-gray-300 p-3 text-center font-semibold">${item.obtained}</td>
-                        <td class="border border-gray-300 p-3 text-center">${item.grade}</td>
-                        <td class="border border-gray-300 p-3 text-center font-bold ${statusColor}">${item.status}</td>
+                        <!-- Padding reduced from p-3 to p-2 -->
+                        <td class="border border-gray-300 p-2 text-left">${item.name}</td>
+                        <td class="border border-gray-300 p-2 text-center">${item.total}</td>
+                        <td class="border border-gray-300 p-2 text-center font-semibold">${item.obtained}</td>
+                        <td class="border border-gray-300 p-2 text-center">${item.grade}</td>
+                        <td class="border border-gray-300 p-2 text-center font-bold ${statusColor}">${item.status}</td>
                     </tr>
                 `;
             });
@@ -329,10 +332,11 @@
             // Summary Row for Board Result look
             marksTableHTML += `
                 <tr class="bg-blue-50 font-extrabold text-blue-800">
-                    <td class="border border-gray-400 p-3 text-left">GRAND TOTAL (${NUM_SUBJECTS} Subjects):</td>
-                    <td class="border border-gray-400 p-3 text-center">${grandTotalMarks}</td>
-                    <td class="border border-gray-400 p-3 text-center">${totalObtainedMarks}</td>
-                    <td class="border border-gray-400 p-3 text-center" colspan="2"></td>
+                    <!-- Padding reduced from p-3 to p-2 -->
+                    <td class="border border-gray-400 p-2 text-left">GRAND TOTAL (${NUM_SUBJECTS} Subjects):</td>
+                    <td class="border border-gray-400 p-2 text-center">${grandTotalMarks}</td>
+                    <td class="border border-gray-400 p-2 text-center">${totalObtainedMarks}</td>
+                    <td class="border border-gray-400 p-2 text-center" colspan="2"></td>
                 </tr>
             `;
 
@@ -343,40 +347,43 @@
 
             // Logo HTML (with fallback)
             const logoHtml = logoUrl 
-                ? `<img src="${logoUrl}" alt="Institute Logo" class="institute-logo w-28 h-28 object-cover mx-auto mb-3 border-4 border-red-400 shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/112x112/cccccc/333333?text=NO+LOGO';" />`
-                : `<div class="institute-logo w-28 h-28 bg-gray-200 text-center flex items-center justify-center mx-auto mb-3 text-sm text-gray-500 border-4 border-red-400">NO LOGO</div>`;
+                ? `<img src="${logoUrl}" alt="Institute Logo" class="institute-logo w-24 h-24 object-cover mx-auto mb-2 border-4 border-red-400 shadow-lg" onerror="this.onerror=null;this.src='https://placehold.co/96x96/cccccc/333333?text=NO+LOGO';" />`
+                : `<div class="institute-logo w-24 h-24 bg-gray-200 text-center flex items-center justify-center mx-auto mb-2 text-sm text-gray-500 border-4 border-red-400">NO LOGO</div>`;
 
 
             // Final Result Card Display (with prominent Division)
             resultCardDiv.innerHTML = `
-                <div class="card-header text-center mb-8 border-b-4 border-red-600 pb-4">
+                <!-- Header font sizes reduced (4xl to 3xl, 2xl to xl) to save vertical space -->
+                <div class="card-header text-center mb-6 border-b-4 border-red-600 pb-3">
                     ${logoHtml}
-                    <h1 class="text-4xl font-extrabold text-red-700 mt-2 mb-1 uppercase">${instituteName}</h1>
-                    <h2 class="text-2xl font-bold text-blue-600 border-t border-b py-1 my-2">ANNUAL EXAMINATION RESULT CARD</h2>
+                    <h1 class="text-3xl font-extrabold text-red-700 mt-1 mb-0 uppercase">${instituteName}</h1>
+                    <h2 class="text-xl font-bold text-blue-600 border-t border-b py-1 my-1">ANNUAL EXAMINATION RESULT CARD</h2>
                 </div>
                 
-                <div class="student-info border-2 border-gray-600 p-4 rounded-lg mb-6 shadow-md grid grid-cols-2 md:grid-cols-4 gap-y-2 text-gray-800 font-medium text-sm md:text-base">
+                <div class="student-info border-2 border-gray-600 p-3 rounded-lg mb-4 shadow-md grid grid-cols-2 md:grid-cols-4 gap-y-1 text-gray-800 font-medium text-sm">
+                    <!-- Text size reduced for info block -->
                     <p><strong>Student Name:</strong> <span class="text-blue-700">${studentName}</span></p>
                     <p><strong>Roll Number:</strong> <span class="text-blue-700">${rollNumber}</span></p>
                     <p><strong>Class/Grade:</strong> <span class="text-blue-700">${className}</span></p>
                     <p><strong>Date of Issue:</strong> <span class="text-blue-700">${dateOfIssue}</span></p>
                 </div>
 
-                <h3 class="text-xl font-bold text-gray-700 mb-2 border-b pb-1">Marks Details</h3>
-                <p class="text-sm text-gray-600 mb-2 italic">Minimum passing marks per subject: ${PASSING_MARKS}</p>
+                <h3 class="text-lg font-bold text-gray-700 mb-1 border-b pb-1">Marks Details</h3>
+                <p class="text-xs text-gray-600 mb-2 italic">Minimum passing marks per subject: ${PASSING_MARKS}</p>
                 ${marksTableHTML}
 
-                <div class="summary bg-gray-50 border-2 border-gray-700 p-4 flex flex-wrap justify-between font-bold mt-6 text-base md:text-xl rounded-lg">
-                    <p class="w-full md:w-1/3 mb-2"><strong>Percentage:</strong> <span class="text-red-600">${percentage}%</span></p>
-                    <p class="w-full md:w-1/3 mb-2"><strong>Overall Grade:</strong> <span class="text-red-600">${overallGrade}</span></p>
-                    <p class="w-full md:w-1/3 mb-2"><strong>Result Status:</strong> <span class="text-3xl font-extrabold" style="color: ${finalResult === 'FAIL' ? '#dc2626' : '#10b981'};">${finalResult}</span></p>
+                <div class="summary bg-gray-50 border-2 border-gray-700 p-3 flex flex-wrap justify-between font-bold mt-4 text-sm md:text-lg rounded-lg">
+                    <!-- Padding and font size reduced for summary -->
+                    <p class="w-full md:w-1/3 mb-1"><strong>Percentage:</strong> <span class="text-red-600">${percentage}%</span></p>
+                    <p class="w-full md:w-1/3 mb-1"><strong>Overall Grade:</strong> <span class="text-red-600">${overallGrade}</span></p>
+                    <p class="w-full md:w-1/3 mb-1"><strong>Result Status:</strong> <span class="text-2xl font-extrabold" style="color: ${finalResult === 'FAIL' ? '#dc2626' : '#10b981'};">${finalResult}</span></p>
                     
-                    <div class="w-full mt-4 text-center border-t pt-3">
-                        <p class="text-2xl font-extrabold text-indigo-700">DIVISION: <span class="text-3xl">${division.toUpperCase()}</span></p>
+                    <div class="w-full mt-3 text-center border-t pt-2">
+                        <p class="text-xl font-extrabold text-indigo-700">DIVISION: <span class="text-2xl">${division.toUpperCase()}</span></p>
                     </div>
                 </div>
 
-                <p class="text-right text-sm mt-8 text-gray-500 italic border-t pt-4">Note: This result is provisional. Contact the institute for verification in case of any discrepancy.</p>
+                <p class="text-right text-xs mt-6 text-gray-500 italic border-t pt-3">Note: This result is provisional. Contact the institute for verification in case of any discrepancy.</p>
             `;
 
             // 3. Display button
@@ -384,18 +391,18 @@
             pdfButton.style.display = 'block';
         }
 
-        // --- UPDATED PDF FUNCTIONALITY (Increased Scale) ---
+        // --- UPDATED PDF FUNCTIONALITY (Reduced Margin for Single Page Fit) ---
         function saveAsPdf() {
             const element = document.getElementById('resultCard');
             const studentName = document.getElementById('studentName').value || 'Student_Result';
             
             // Configuration for html2pdf
             const opt = {
-                // Increased margin slightly
-                margin: 0.6, // Margins in inches
+                // *** IMPORTANT FIX: Reduced margin from 0.6 to 0.3 for single-page fit ***
+                margin: 0.3, // Margins in inches
                 filename: `${studentName.replace(/ /g, '_')}_Result_Card.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                // *** IMPORTANT FIX: Increased scale to 3 for better rendering and clarity/size in PDF ***
+                // Increased scale to 3 for better rendering and clarity/size in PDF
                 html2canvas: { scale: 3, logging: false, dpi: 300, letterRendering: true }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
